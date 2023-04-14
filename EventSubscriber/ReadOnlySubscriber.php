@@ -2,15 +2,16 @@
 
 namespace steevanb\DoctrineReadOnlyHydrator\EventSubscriber;
 
-use Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs;
-use steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs;
+use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use steevanb\DoctrineReadOnlyHydrator\Entity\ReadOnlyEntityInterface;
 use steevanb\DoctrineReadOnlyHydrator\Exception\ReadOnlyEntityCantBeFlushedException;
 use steevanb\DoctrineReadOnlyHydrator\Exception\ReadOnlyEntityCantBePersistedException;
+use steevanb\DoctrineReadOnlyHydrator\Hydrator\SimpleObjectHydrator;
 
 class ReadOnlySubscriber implements EventSubscriber
 {
@@ -70,8 +71,7 @@ class ReadOnlySubscriber implements EventSubscriber
         } catch (\Exception $exception) {}
     }
 
-    /** @param LifecycleEventArgs $eventArgs */
-    public function postLoad(LifecycleEventArgs $eventArgs)
+    public function postLoad(PostLoadEventArgs $eventArgs)
     {
         if ($eventArgs->getObject() instanceof ReadOnlyEntityInterface) {
             // add ReadOnlyProxy to classMetada list
